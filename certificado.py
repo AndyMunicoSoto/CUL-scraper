@@ -37,6 +37,14 @@ def login(driver, dni, contrasena):
 
     campo_contrasena = driver.find_element(By.ID, "password")
     campo_contrasena.send_keys(contrasena)
+
+def tipo_alerta(driver) -> str:
+    alerta = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "swal2-title")))
+    alerta_texto = alerta.text
+    print("Texto de la alerta:", alerta_texto)
+    return alerta_texto
+    # ¡Bienvenido!
+    # ¡Alerta!
     
 def solve_captcha(driver):
     SEL_CAPTCHA_IMG   = (By.CSS_SELECTOR, "img[src^='blob:']")
@@ -69,18 +77,67 @@ def bienvenida(driver):
     time.sleep(2)  # Esperamos un segundo antes de continuar
    
 def bienvenida_2(driver):
-    btn = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn-danger")))
+    btn = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div.modal-footer button.btn-danger")))
     btn.click()
 
     time.sleep(5)  # Esperamos un segundo antes de continuar
 
+def obtener_certificado(driver):
+    btn_certi = WebDriverWait(driver,10).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(.,'Obtener Certificado')]")))
+    btn_certi.click()
+    time.sleep(5)  # Esperamos un segundo antes de continuar
+
+def solicitar_certificado(driver):
+    btn_solicitar = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "solicitar")))
+    btn_solicitar.click()
+    time.sleep(5)  # Esperamos un segundo antes de continuar
+
+def descargar_certificado(driver):
+    # Esperamos a que el botón de descarga esté presente
+    link_guardar = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.XPATH, "//a[contains(., 'Guardar') and contains(@href, 'DescargarCUL')]"))
+)
+    link_guardar.click()
+    time.sleep(5)  # Esperamos un segundo antes de continuar
+
+def carpeta_certificados(driver):
+
+    btn_carpe = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//a[contains(.,'Ver mi carpeta de certificados')]")))
+    btn_carpe.click()
+    time.sleep(5)  # Esperamos un segundo antes de continuar
+
+def ver_certificados(driver):
+
+    btn_carpe = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//a[contains(.,' Ver Certificado')]")))
+    btn_carpe.click()
+    time.sleep(5)  # Esperamos un segundo antes de continuar
+
 def main():
-    login(driver, "48508068", "Porlasara1@")
-    ruta = solve_captcha(driver)
-    texto = leer_captcha(ruta)
-    ingresar_captcha(driver, texto)
+
+    validacion = True
+
+    while validacion:
+        driver.refresh()
+        login(driver, "48508068", "Porlasara1@")
+        ruta = solve_captcha(driver)
+        texto = leer_captcha(ruta)
+        time.sleep(2)  # Esperamos un segundo antes de ingresar el captcha
+        ingresar_captcha(driver, texto)
+        alerta = tipo_alerta(driver)
+
+        if alerta == "¡Bienvenido!":
+            validacion = False
+
     bienvenida(driver)
     bienvenida_2(driver)
+    obtener_certificado(driver)
+
+    #VALIDACION DE BOTON DE solicitar certificado
+
+    #solicitar_certificado(driver)
+    carpeta_certificados(driver)
+    ver_certificados(driver)
+    descargar_certificado(driver)
 
 if __name__ == "__main__":
     main()

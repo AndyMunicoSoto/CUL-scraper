@@ -325,7 +325,8 @@ def click_obtener_certificado(driver: webdriver.Chrome, wait: WebDriverWait):
     Si se abre una pestaña nueva, cambia el foco a ella.
     """
     ventanas_antes = set(driver.window_handles)
-    btn = wait.until(EC.element_to_be_clickable(SEL_BTN_OBTENER_CUL))
+    btn = wait.until(EC.element_to_be_clickable(SEL_BTN_OBTENER_CUL)) 
+    #SEL_BTN_OBTENER_CUL   = (By.XPATH, "//button[contains(@class,'btn-danger') and contains(.,'Certificado')]")
     btn.click()
 
     try:
